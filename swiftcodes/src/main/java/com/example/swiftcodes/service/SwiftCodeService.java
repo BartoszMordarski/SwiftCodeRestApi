@@ -81,6 +81,35 @@ public class SwiftCodeService {
         return new MessageResponseDto("Swift code " + codeToDelete.getSwiftCode() + " deleted successfully");
     }
 
+    @Transactional
+    public MessageResponseDto addSwiftCode(SwiftCodeDto swiftCodeDto) {
+        if(swiftCodeRepository.findBySwiftCode(swiftCodeDto.getSwiftCode()).isPresent()) {
+            throw new IllegalArgumentException("Swift code already exists: " + swiftCodeDto.getSwiftCode());
+        }
+
+        Country country = countryRepository.findByIso2Code(swiftCodeDto.getCountryISO2().toUpperCase())
+                .orElseThrow(() -> new EntityNotFoundException("Country not found: " + swiftCodeDto.getCountryISO2()));
+
+
+        SwiftCode swiftCode = SwiftCode.builder()
+                .swiftCode(swiftCodeDto.getSwiftCode())
+                .bankName(swiftCodeDto.getBankName())
+                .address(swiftCodeDto.getAddress())
+                .isHeadquarter(swiftCodeDto.getIsHeadquarter())
+                .country(country)
+                .build();
+
+        if(!swiftCode.getIsHeadquarter() && swiftCodeDto.getSwiftCode().length() >= 8) {
+            String bankIdentifier = swiftCodeDto.getSwiftCode().substring(0, 8);
+            String headquarterCode = bankIdentifier + "XXX";
+            swiftCodeRepository.findBySwiftCode(headquarterCode)
+                    .ifPresent(swiftCode::setHeadquarter);
+        }
+
+        swiftCodeRepository.save(swiftCode);
+        return new MessageResponseDto("Swift code added successfully!");
+    }
+
 
 
 
