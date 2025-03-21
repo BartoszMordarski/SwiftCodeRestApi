@@ -29,9 +29,6 @@ public class Country {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "time_zone")
-    private String timeZone;
-
     @PrePersist
     @PreUpdate
     public void ensureUppercase() {

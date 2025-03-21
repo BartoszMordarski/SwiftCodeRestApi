@@ -55,9 +55,7 @@ public class SwiftCodeParser {
                     String swiftCode = fields[1];
                     String bankName = fields[3];
                     String address = fields[4];
-                    String townName = fields[5];
                     String countryName = fields[6].toUpperCase();
-                    String timeZone = fields[7];
 
                     boolean isHeadquarter = swiftCode.endsWith("XXX");
 
@@ -67,7 +65,6 @@ public class SwiftCodeParser {
                                         Country.builder()
                                                 .iso2Code(keyFromMap)
                                                 .name(countryName)
-                                                .timeZone(timeZone)
                                                 .build()
                                 ));
                     });
@@ -80,7 +77,6 @@ public class SwiftCodeParser {
                             .swiftCode(swiftCode)
                             .bankName(bankName)
                             .address(address)
-                            .townName(townName)
                             .isHeadquarter(isHeadquarter)
                             .country(country)
                             .build();
