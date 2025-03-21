@@ -37,4 +37,10 @@ public class SwiftCodeController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping
+    public ResponseEntity<MessageResponseDto> addSwiftCode(@RequestBody SwiftCodeDto swiftCodeDto) {
+        MessageResponseDto response = swiftCodeService.addSwiftCode(swiftCodeDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
 }
