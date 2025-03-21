@@ -34,9 +34,6 @@ public class SwiftCode {
     @Column(name = "address", columnDefinition = "TEXT")
     private String address;
 
-    @Column(name = "town_name")
-    private String townName;
-
     @Column(name = "is_headquarter", nullable = false)
     private Boolean isHeadquarter;
 
