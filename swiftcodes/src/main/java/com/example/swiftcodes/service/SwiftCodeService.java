@@ -83,13 +83,17 @@ public class SwiftCodeService {
 
     @Transactional
     public MessageResponseDto addSwiftCode(SwiftCodeDto swiftCodeDto) {
-        if(swiftCodeRepository.findBySwiftCode(swiftCodeDto.getSwiftCode()).isPresent()) {
-            throw new IllegalArgumentException("Swift code already exists: " + swiftCodeDto.getSwiftCode());
-        }
+
+        validateSwiftCode(swiftCodeDto);
 
         Country country = countryRepository.findByIso2Code(swiftCodeDto.getCountryISO2().toUpperCase())
-                .orElseThrow(() -> new EntityNotFoundException("Country not found: " + swiftCodeDto.getCountryISO2()));
-
+                .orElseGet(() -> {
+                    Country newCountry = Country.builder()
+                            .iso2Code(swiftCodeDto.getCountryISO2().toUpperCase())
+                            .name(swiftCodeDto.getCountryName().toUpperCase())
+                            .build();
+                    return countryRepository.save(newCountry);
+                });
 
         SwiftCode swiftCode = SwiftCode.builder()
                 .swiftCode(swiftCodeDto.getSwiftCode())
@@ -111,6 +115,28 @@ public class SwiftCodeService {
     }
 
 
+    private void validateSwiftCode(SwiftCodeDto swiftCodeDto) {
+        if(swiftCodeRepository.findBySwiftCode(swiftCodeDto.getSwiftCode()).isPresent()) {
+            throw new IllegalArgumentException("Swift code already exists: " + swiftCodeDto.getSwiftCode());
+        }
+
+        if (swiftCodeDto.getSwiftCode().length() == 11 &&
+                "XXX".equals(swiftCodeDto.getSwiftCode().substring(8)) &&
+                !swiftCodeDto.getIsHeadquarter()) {
+            throw new IllegalArgumentException("Swift code ending with XXX has to be a headquarter");
+        }
+
+        if (swiftCodeDto.getSwiftCode().length() == 11 &&
+                !"XXX".equals(swiftCodeDto.getSwiftCode().substring(8)) &&
+                swiftCodeDto.getIsHeadquarter()) {
+            throw new IllegalArgumentException("Headquarter swift code must end with XXX");
+        }
+
+        if (!swiftCodeDto.getSwiftCode().substring(4, 6).equals(swiftCodeDto.getCountryISO2())) {
+            throw new IllegalArgumentException("Characters 5-6 of swift code must match the country ISO code: "
+                    + swiftCodeDto.getCountryISO2());
+        }
+    }
 
 
     private SwiftCodeDto convertToSwiftCodeDto(SwiftCode swiftCode) {
