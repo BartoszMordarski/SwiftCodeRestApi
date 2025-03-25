@@ -5,6 +5,7 @@ import com.example.swiftcodes.model.dto.MessageResponseDto;
 import com.example.swiftcodes.model.dto.SwiftCodeDto;
 import com.example.swiftcodes.model.dto.SwiftCodeWithBranchesDto;
 import com.example.swiftcodes.service.SwiftCodeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class SwiftCodeController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponseDto> addSwiftCode(@RequestBody SwiftCodeDto swiftCodeDto) {
+    public ResponseEntity<MessageResponseDto> addSwiftCode(@Valid @RequestBody SwiftCodeDto swiftCodeDto) {
         MessageResponseDto response = swiftCodeService.addSwiftCode(swiftCodeDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

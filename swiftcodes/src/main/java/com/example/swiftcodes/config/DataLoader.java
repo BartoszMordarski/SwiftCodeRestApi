@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -15,6 +16,8 @@ import java.io.InputStream;
 @Configuration
 public class DataLoader {
     private static final String DATA_FILE_PATH = "data/swift_codes.tsv";
+    private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
+
 
     private final SwiftCodeParser swiftCodeParser;
 
@@ -23,6 +26,7 @@ public class DataLoader {
     }
 
     @Bean
+    @Profile("!test")
     public CommandLineRunner loadData() {
         return args -> {
             try {
@@ -33,6 +37,7 @@ public class DataLoader {
                     }
                 }
             } catch (IOException e) {
+                logger.error("Error loading data file: {}", e.getMessage(), e);
             }
         };
     }
