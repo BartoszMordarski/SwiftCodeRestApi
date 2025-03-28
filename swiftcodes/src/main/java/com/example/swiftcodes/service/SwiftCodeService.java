@@ -103,17 +103,20 @@ public class SwiftCodeService {
                 .country(country)
                 .build();
 
-        if(!swiftCode.getIsHeadquarter() && swiftCodeDto.getSwiftCode().length() >= 8) {
-            String bankIdentifier = swiftCodeDto.getSwiftCode().substring(0, 8);
-            String headquarterCode = bankIdentifier + "XXX";
-            swiftCodeRepository.findBySwiftCode(headquarterCode)
-                    .ifPresent(swiftCode::setHeadquarter);
-        }
+        linkToHeadquarter(swiftCode);
 
         swiftCodeRepository.save(swiftCode);
         return new MessageResponseDto("Swift code added successfully!");
     }
 
+    private void linkToHeadquarter(SwiftCode swiftCode) {
+        if(!swiftCode.getIsHeadquarter() && swiftCode.getSwiftCode().length() >= 8) {
+            String bankIdentifier = swiftCode.getSwiftCode().substring(0, 8);
+            String headquarterCode = bankIdentifier + "XXX";
+            swiftCodeRepository.findBySwiftCode(headquarterCode)
+                    .ifPresent(swiftCode::setHeadquarter);
+        }
+    }
 
     private void validateSwiftCode(SwiftCodeDto swiftCodeDto) {
         if(swiftCodeRepository.findBySwiftCode(swiftCodeDto.getSwiftCode()).isPresent()) {
