@@ -1,4 +1,4 @@
-package com.example.swiftcodes.config;
+package com.example.swiftcodes.util;
 
 import com.example.swiftcodes.service.SwiftCodeParser;
 import org.slf4j.Logger;
