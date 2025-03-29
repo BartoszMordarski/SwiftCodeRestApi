@@ -26,7 +26,7 @@ public class DataLoader {
     }
 
     @Bean
-    @Profile("!test")
+    @Profile({"!test", "!unittest"})
     public CommandLineRunner loadData() {
         return args -> {
             try {
